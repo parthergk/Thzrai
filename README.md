@@ -47,7 +47,7 @@ With AI-driven visual insights, you can uncover how design choices affect visibi
 
 ## 📸 Demo & Preview  
 
-🔗 **Live Demo:** [https://thumblyzer.vercel.app](https://thumblyzer.vercel.app)  
+🔗 **Live Demo:** [Thzrai](https://thzrai.vercel.app/)  
 *(Click to try it out!)*  
 
 <p align="center">
