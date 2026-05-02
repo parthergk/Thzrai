@@ -1,6 +1,6 @@
 # 🎯 **Thumblyzer** – YouTube Thumbnail Analyzer & Design Assistant  
 
-> *A smart, quick-and-friendly thumbnail analyzer powered by **Gemini AI**, built for creators and thumbnail designers.*
+> *AI-powered thumbnail intelligence tool that helps creators increase click-through rate (CTR) using real design insights.*
 
 <p align="center">
   <img src="docs/screenshot.png" alt="Thumblyzer preview" width="700" />
