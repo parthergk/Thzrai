@@ -111,3 +111,14 @@ npm install
 yarn
 # or
 pnpm install
+```
+
+## 🤝 Contributing
+
+We welcome contributions!
+
+- Improve AI prompts
+- Add new analysis features
+- Enhance UI/UX
+
+Start by opening an issue or submitting a PR 🚀
