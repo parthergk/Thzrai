@@ -37,6 +37,15 @@ With AI-driven visual insights, you can uncover how design choices affect visibi
 
 ---
 
+## 🧩 What Makes Thumblyzer Different?
+
+- 🎯 Built specifically for YouTube thumbnails (not generic image analysis)
+- 📊 Focused on CTR improvement, not just raw data
+- 🤖 Combines AI insights with practical design suggestions
+- 🧠 Beginner-friendly explanations (not technical jargon)
+
+---
+
 ## 👥 Who’s It For?  
 
 🎬 **YouTubers** – Evaluate and enhance your video thumbnails.  
