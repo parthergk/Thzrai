@@ -1,6 +1,6 @@
 # 🎯 **Thumblyzer** – YouTube Thumbnail Analyzer & Design Assistant  
 
-> *A smart, quick-and-friendly thumbnail analyzer powered by **Gemini AI**, built for creators and thumbnail designers.*
+> *AI-powered thumbnail intelligence tool that helps creators increase click-through rate (CTR) using real design insights.*
 
 <p align="center">
   <img src="docs/screenshot.png" alt="Thumblyzer preview" width="700" />
@@ -37,6 +37,15 @@ With AI-driven visual insights, you can uncover how design choices affect visibi
 
 ---
 
+## 🧩 What Makes Thumblyzer Different?
+
+- 🎯 Built specifically for YouTube thumbnails (not generic image analysis)
+- 📊 Focused on CTR improvement, not just raw data
+- 🤖 Combines AI insights with practical design suggestions
+- 🧠 Beginner-friendly explanations (not technical jargon)
+
+---
+
 ## 👥 Who’s It For?  
 
 🎬 **YouTubers** – Evaluate and enhance your video thumbnails.  
@@ -47,7 +56,7 @@ With AI-driven visual insights, you can uncover how design choices affect visibi
 
 ## 📸 Demo & Preview  
 
-🔗 **Live Demo:** [https://thumblyzer.vercel.app](https://thumblyzer.vercel.app)  
+🔗 **Live Demo:** [Thzrai](https://thzrai.vercel.app/)  
 *(Click to try it out!)*  
 
 <p align="center">
@@ -102,3 +111,14 @@ npm install
 yarn
 # or
 pnpm install
+```
+
+## 🤝 Contributing
+
+We welcome contributions!
+
+- Improve AI prompts
+- Add new analysis features
+- Enhance UI/UX
+
+Start by opening an issue or submitting a PR 🚀
