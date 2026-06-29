@@ -1,11 +1,11 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
-import { signIn } from "next-auth/react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthProvider";
 
 const formSchema = z.object({
   email: z
@@ -28,6 +28,7 @@ const SignIn: React.FC = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { signIn } = useAuth();
 
   const {
     register,
@@ -47,29 +48,76 @@ const SignIn: React.FC = () => {
     setFeedback("");
 
     try {
-      const callbackUrl = searchParams?.get("callbackUrl") ?? "/";
+      const callbackUrl = searchParams?.get("callbackUrl") ?? "/dashboard";
 
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: values.email,
-        password: values.password,
-        callbackUrl,
+      const res = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+        credentials: "include"
       });
 
-      if (result?.error) {
-        setError(result.error);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.detail || "Invalid credentials");
         return;
       }
 
-      if (result?.ok) {
-        setFeedback("Signed in successfully");
-        reset();
-        router.replace(result.url || callbackUrl);
-      }
+      setFeedback("Signed in successfully");
+      reset();
+
+      signIn({
+        _id: data.user_id?.toString(),
+        email: data.email,
+        name: data.name,
+        username: data.username
+      });
+
+      router.replace(callbackUrl);
     } catch {
       setError("Something went wrong. Please try again.");
     }
   };
+
+  useEffect(() => {
+    // @ts-ignore
+    window.handleGoogleCredentialResponse = async (response: any) => {
+      setError(null);
+      setFeedback("");
+      try {
+        const res = await fetch("http://localhost:8000/auth/google-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: response.credential }),
+          credentials: "include"
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.detail || "Google authentication failed");
+          return;
+        }
+
+        setFeedback("Signed in successfully with Google");
+        signIn({
+          _id: data.user_id?.toString(),
+          email: data.email,
+          name: data.name,
+          username: data.username
+        });
+
+        const callbackUrl = searchParams?.get("callbackUrl") ?? "/dashboard";
+        router.replace(callbackUrl);
+      } catch {
+        setError("Unable to connect to Google authentication server.");
+      }
+    };
+  }, [signIn, router, searchParams]);
 
   return (
     <div className="mt-16 flex justify-center w-full min-h-screen bg-white dark:bg-neutral-900 border-t">
@@ -126,14 +174,27 @@ const SignIn: React.FC = () => {
           <span className="flex-1 h-px bg-neutral-400" />
         </div>
 
-        {/* Google Sign In */}
-        <button
-          type="button"
-          onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="w-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-medium py-2 rounded-sm"
-        >
-          Sign In with Google
-        </button>
+        {/* Google Sign In HTML Layout */}
+        <div className="flex justify-center w-full my-2">
+          <div
+            id="g_id_onload"
+            data-client_id={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+            data-context="signin"
+            data-ux_mode="popup"
+            data-callback="handleGoogleCredentialResponse"
+            data-auto_prompt="false"
+          />
+          <div
+            className="g_id_signin"
+            data-type="standard"
+            data-shape="rectangular"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left"
+            data-width="320"
+          />
+        </div>
 
         {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
         {feedback && <p className="text-green-500 text-sm mt-4">{feedback}</p>}

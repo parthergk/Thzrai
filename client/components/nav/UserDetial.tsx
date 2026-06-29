@@ -2,7 +2,7 @@
 
 import React from "react";
 import { AtSign, Mail } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { useAuth } from "@/context/AuthProvider";
 
 interface UserDetailProps {
   isUser: boolean;
@@ -16,6 +16,7 @@ interface UserDetailProps {
 }
 
 const UserDetail: React.FC<UserDetailProps> = ({ isUser, data }) => {
+  const { signOut } = useAuth();
   if (!isUser) return null;
 
   return (

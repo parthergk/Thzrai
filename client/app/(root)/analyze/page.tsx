@@ -10,7 +10,7 @@ import Color from "@/components/resourcesItem/Color";
 import Img from "@/components/resourcesItem/Img";
 import Detail from "@/components/resourcesItem/Detail";
 import { useEffect, useState, Suspense, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/context/AuthProvider";
 import { THUMBNAIL_ANALYSIS_PROMPT } from "@/lib/prompts";
 // import {parsed} from "@/lib/data";
 
@@ -36,7 +36,7 @@ const Analyze: React.FC = () => {
   const searchParams = useSearchParams();
   const thumbnailUrl = searchParams?.get("thumbnailUrl");
   const router = useRouter();
-  const { data } = useSession();
+  const { data } = useAuth();
   const { detailItem } = useDetailItem();
 
   const [fonts, setFonts] = useState<FontItem[]>([]);
@@ -68,8 +68,8 @@ const Analyze: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${data?.user?.accessToken}`
         },
+        credentials: "include",
         body: JSON.stringify({
           prompt: THUMBNAIL_ANALYSIS_PROMPT,
           image_url: thumbnailUrl,
@@ -132,8 +132,8 @@ const Analyze: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${data?.user?.accessToken}`
         },
+        credentials: "include",
         body: JSON.stringify({
           userId: Number(data?.user?._id),
           imgUrl: thumbnailUrl,

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useAuth } from "@/context/AuthProvider";
 
 const formSchema = z.object({
   code: z
@@ -23,6 +23,7 @@ const VerifyEmail: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const username = searchParams?.get("username");
+  const { signIn } = useAuth();
 
   const {
     register,
@@ -53,6 +54,7 @@ const VerifyEmail: React.FC = () => {
           code: values.code,
           username,
         }),
+        credentials: "include" // Receive the HTTP-only cookie automatically
       });
 
       const result = await response.json();
@@ -65,18 +67,12 @@ const VerifyEmail: React.FC = () => {
       setFeedback("Verification successful 🎉");
       reset();
 
-      const signInResult = await signIn("credentials", {
-        redirect: false,
-        email: result.email,
-        userId: result.user_id?.toString(),
-        accessToken: result.access_token,
-        autoLogin: "true",
+      // Populate local user state
+      signIn({
+        _id: result.user_id?.toString(),
+        email: result.email
       });
 
-      if (signInResult?.error) {
-        setError("Auto-login failed. Please login manually.");
-        return;
-      }
       router.push("/dashboard");
     } catch {
       setError("Unable to connect to server. Please try again.");

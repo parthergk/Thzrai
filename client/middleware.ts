@@ -1,33 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request });
-  console.log("token in middleware", token);
-
+  const token = request.cookies.get("access_token")?.value;
   const { pathname, origin } = request.nextUrl;
 
-  const GUEST_PAGES = ["/", "/login", "/register"];
-  const PROTECTED_PAGES = ["/saved-thumbnails"];
+  const GUEST_PAGES = ["/sign-in", "/sign-up", "/verifiyUser"];
+  const PROTECTED_PAGES = ["/saved-thumbnails", "/dashboard", "/analyze"];
 
-  if (token && GUEST_PAGES.includes(pathname)) {
+  const isGuestPage = GUEST_PAGES.some((route) => pathname.startsWith(route));
+  const isProtectedPage = PROTECTED_PAGES.some((route) => pathname.startsWith(route));
+
+  if (token && isGuestPage) {
     return NextResponse.redirect(`${origin}/dashboard`);
   }
 
-  const isProtectedPath = PROTECTED_PAGES.some((route) =>
-    pathname.startsWith(route)
-  );
-  console.log("is protected path", isProtectedPath);
-
-  if (isProtectedPath && !token) {
-    console.log("redirect to login");
-
-    return NextResponse.redirect(`${origin}/sign-in?p=${pathname}`);
+  if (!token && isProtectedPage) {
+    return NextResponse.redirect(`${origin}/sign-in?callbackUrl=${encodeURIComponent(pathname)}`);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/sign-in", "/sign-up", "/saved-thumbnails/:path*"],
+  matcher: [
+    "/sign-in",
+    "/sign-up",
+    "/verifiyUser",
+    "/saved-thumbnails/:path*",
+    "/dashboard/:path*",
+    "/analyze/:path*"
+  ],
 };

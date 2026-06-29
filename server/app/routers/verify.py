@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Response, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from core.database import get_db
@@ -12,17 +12,17 @@ class VerifyUser(BaseModel):
     username: str
 
 @router.post("/")
-async def verify_user(user:VerifyUser, db: Session = Depends(get_db)):
+async def verify_user(user: VerifyUser, response: Response, db: Session = Depends(get_db)):
     user_exist = db.query(User).filter(User.username == user.username).first()
 
     if not user_exist:
         raise HTTPException(
             status_code=404,
-            detail= "User does not exist with this username."
+            detail="User does not exist with this username."
         )
 
     if user_exist.isVerified:
-        return {"message": "Email is already verified."}
+        return {"message": "Email is already verified.", "success": True}
 
     if user_exist.verifyCode != user.code:
         raise HTTPException(
@@ -47,10 +47,20 @@ async def verify_user(user:VerifyUser, db: Session = Depends(get_db)):
         "email": user_exist.email
     })
 
+    # Set HTTP-only cookie
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=604800,  # 7 days
+        samesite="lax",
+        secure=False,    # Set to True in production (requires HTTPS)
+        path="/"
+    )
+
     return {
         "success": True,
         "email": user_exist.email,
         "user_id": user_exist.id,
-        "access_token": token,
         "message": "Email verified successfully."
     }
