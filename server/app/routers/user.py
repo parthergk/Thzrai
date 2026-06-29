@@ -9,10 +9,6 @@ from services.verification_service import send_otp
 
 router  = APIRouter()
 
-@router.get("/user")
-def get_user():
-    return {"message":"hello"}
-
 @router.post("/user")
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     exist_user = db.query(User).filter(User.username == user.username).first()
