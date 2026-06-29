@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from core.database import Base, engine
 from routers.user import router as user_router
 
