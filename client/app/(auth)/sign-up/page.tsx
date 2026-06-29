@@ -53,7 +53,7 @@ const Page: React.FC = () => {
     setFeedback("");
 
     try {
-      const response = await fetch("/api/auth/sign-up", {
+      const response = await fetch("http://localhost:8000/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({...values, provider: "credentials"}),

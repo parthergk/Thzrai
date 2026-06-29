@@ -64,12 +64,15 @@ const Analyze: React.FC = () => {
     setError(null);
 
     try {
-      const res = await fetch("/api/analyze-thumbnail", {
+      const res = await fetch("http://localhost:8000/analyze", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${data?.user?.accessToken}`
+        },
         body: JSON.stringify({
           prompt: THUMBNAIL_ANALYSIS_PROMPT,
-          img: thumbnailUrl,
+          image_url: thumbnailUrl,
         }),
       });
 
@@ -125,11 +128,14 @@ const Analyze: React.FC = () => {
     setIsSaving(true);
     setFeedback("");
     try {
-      const response = await fetch("/api/thumbnail", {
+      const response = await fetch("http://localhost:8000/thumbnail", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${data?.user?.accessToken}`
+        },
         body: JSON.stringify({
-          userId: data?.user?._id,
+          userId: Number(data?.user?._id),
           imgUrl: thumbnailUrl,
         }),
       });

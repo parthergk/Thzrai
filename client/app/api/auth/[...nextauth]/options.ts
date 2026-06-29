@@ -1,9 +1,6 @@
-import User from "@/database/models/userModel";
-import connectDB from "@/lib/connection";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import bcrypt from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,51 +10,51 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
         autoLogin: { label: "Auto Login", type: "text" },
+        accessToken: { label: "Access Token", type: "text" },
+        userId: { label: "User ID", type: "text" },
       },
 
-      async authorize(credentials, req): Promise<any> {
+      async authorize(credentials): Promise<any> {
         if (!credentials?.email) {
           throw new Error("Email is required");
         }
 
-        await connectDB();
+        // Credentials for auto login (post email-verification)
+        if (credentials.autoLogin === "true") {
+          return {
+            _id: credentials.userId,
+            email: credentials.email,
+            accessToken: credentials.accessToken,
+          };
+        }
+
+        if (!credentials.password) {
+          throw new Error("Password is required");
+        }
 
         try {
-          const user = await User.findOne({
-            email: credentials?.email,
+          const res = await fetch("http://localhost:8000/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
           });
-          if (!user) {
-            throw new Error("Invalid email");
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.detail || "Invalid credentials");
           }
 
-          if (!user?.isVerified) {
-            throw new Error("User not verified");
-          }
-
-          // credentials for auto login
-          if (credentials.autoLogin === "true") {
-            
-            return user;
-          }
-
-          //password login
-          if (!credentials.password) {
-            throw new Error("Password is required");
-          }
-
-          const isMatch = await bcrypt.compare(
-            credentials?.password,
-            user.password
-          );
-
-          if (!isMatch) {
-            throw new Error("Invalid password");
-          }
-
-          return user;
+          return {
+            _id: data.user_id?.toString(),
+            email: data.email,
+            accessToken: data.access_token,
+          };
         } catch (error) {
           console.error("Authorization error:", error);
-
           if (error instanceof Error) {
             throw new Error(error.message || "Authentication failed");
           } else {
@@ -66,7 +63,6 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-    //google provider
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
@@ -76,24 +72,26 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        await connectDB();
         try {
-          let existingUser = await User.findOne({ email: user.email });
+          // Call FastAPI Google Login to verify identity token and register/retrieve database user
+          const res = await fetch("http://localhost:8000/auth/google-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: account.id_token }),
+          });
 
-          if (!existingUser) {
-            const newUserData = {
-              email: user.email,
-              name: user.name,
-              provider: "google",
-              isVerified: true,
-            };
+          const data = await res.json();
 
-            existingUser = await User.create(newUserData);
+          if (!res.ok) {
+            console.error("Google sign-in API failure:", data);
+            return false;
           }
 
-          user._id = existingUser._id;
+          // Populate NextAuth session fields with FastAPI values
+          user._id = data.user_id?.toString();
+          user.accessToken = data.access_token;
         } catch (error) {
-          console.error("Google sign-in error:", error);
+          console.error("Google sign-in connection error:", error);
           return false;
         }
       }
@@ -103,13 +101,15 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session) {
         session.user._id = token._id;
+        session.user.accessToken = token.accessToken;
       }
       return session;
     },
 
     async jwt({ token, user }) {
       if (user) {
-        token._id = user._id?.toString();
+        token._id = user._id;
+        token.accessToken = user.accessToken;
       }
       return token;
     },

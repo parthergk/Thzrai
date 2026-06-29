@@ -12,6 +12,7 @@ router  = APIRouter()
 @router.post("/user")
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     exist_user = db.query(User).filter(User.username == user.username).first()
+    print("Exist User", exist_user)
 
     if exist_user:
         raise HTTPException(
@@ -20,6 +21,8 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         )
 
     exist_email  = db.query(User).filter(User.email == user.email).first()
+    print("Exist Email", exist_email)
+
     if exist_email:
         raise HTTPException(
             status_code=409,
@@ -63,4 +66,8 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
         detail="Failed to send verification email"
     )
 
-    return {"message": "User registered successfully. Please verify your email."}
+    return {
+        "success": True,
+        "username": new_user.username,
+        "message": "User registered successfully. Please verify your email."
+    }

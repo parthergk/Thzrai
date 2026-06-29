@@ -46,7 +46,7 @@ const VerifyEmail: React.FC = () => {
     }
 
     try {
-      const response = await fetch("/api/auth/verify", {
+      const response = await fetch("http://localhost:8000/verify/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -68,6 +68,8 @@ const VerifyEmail: React.FC = () => {
       const signInResult = await signIn("credentials", {
         redirect: false,
         email: result.email,
+        userId: result.user_id?.toString(),
+        accessToken: result.access_token,
         autoLogin: "true",
       });
 

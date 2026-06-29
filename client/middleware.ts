@@ -25,18 +25,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(`${origin}/sign-in?p=${pathname}`);
   }
 
-  if (pathname.startsWith("/api/thumbnail") && request.method === "POST") {
-    if (!token) {
-      return new NextResponse(
-        JSON.stringify({ error: "Unauthorized access. Please log in." }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
-      );
-    }
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/sign-in", "/sign-up", "/api/thumbnail", "/saved-thumbnails/:path*"],
+  matcher: ["/sign-in", "/sign-up", "/saved-thumbnails/:path*"],
 };

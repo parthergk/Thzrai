@@ -48,7 +48,9 @@ async def login(user: Login_User, db: Session = Depends(get_db)):
 
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "user_id": existing_user.id,
+        "email": existing_user.email
     }
 
 @router.post("/google-login")
@@ -80,5 +82,7 @@ def google_login(data: GoogleLoginRequest, db: Session = Depends(get_db)):
 
     return {
         "access_token": access_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "user_id": user.id,
+        "email": user.email
     }

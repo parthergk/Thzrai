@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from core.database import get_db
 from models.user import User
+from services.auth_service import create_access_token
 
 router  = APIRouter()
 
@@ -41,4 +42,15 @@ async def verify_user(user:VerifyUser, db: Session = Depends(get_db)):
             detail="An error occurred while verifying the user."
         )
 
-    return {"message": "Email verified successfully."}
+    token = create_access_token({
+        "user_id": user_exist.id,
+        "email": user_exist.email
+    })
+
+    return {
+        "success": True,
+        "email": user_exist.email,
+        "user_id": user_exist.id,
+        "access_token": token,
+        "message": "Email verified successfully."
+    }

@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { Download, Zap } from "lucide-react";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 const SavedThumbnails = () => {
+  const { data: session } = useSession();
   const [thumbnails, setThumbnails] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -12,8 +14,13 @@ const SavedThumbnails = () => {
 
   useEffect(() => {
     const fetchThumbnails = async () => {
+      if (!session?.user?.accessToken) return;
       try {
-        const response = await fetch("/api/thumbnail");
+        const response = await fetch("http://localhost:8000/thumbnail", {
+          headers: {
+            "Authorization": `Bearer ${session.user.accessToken}`
+          }
+        });
         const data = await response.json();
 
         if (data.message) {
@@ -36,7 +43,7 @@ const SavedThumbnails = () => {
     };
 
     fetchThumbnails();
-  }, []);
+  }, [session]);
 
   const downloadThumbnail = async (thumbnailUrl: string) => {
     try {

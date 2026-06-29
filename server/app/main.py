@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from core.database import Base, engine
 from routers.user import router as user_router
 from routers.verify import router as verify_router
@@ -7,6 +8,14 @@ from routers.thumbnail import router as thumbnail_router
 from routers.analyze import router as analyze_router
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 Base.metadata.create_all(bind=engine)
 
