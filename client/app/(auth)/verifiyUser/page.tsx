@@ -60,7 +60,7 @@ const VerifyEmail: React.FC = () => {
       const result = await response.json();
       
       if (!response.ok) {
-        setError(result.message || "Verification failed. Please try again.");
+        setError(result.detail || "Verification failed. Please try again.");
         return;
       }
 

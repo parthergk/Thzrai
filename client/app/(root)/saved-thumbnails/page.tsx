@@ -25,8 +25,14 @@ const SavedThumbnails = () => {
         });
         const data = await response.json();
 
-        if (data.message) {
-          setMessage(data.message);
+        if (!response.ok) {
+          if (response.status === 404) {
+            setMessage(data.detail || "No thumbnails found.");
+            setThumbnails([]);
+          } else {
+            setError(data.detail || "Failed to load thumbnails. Please try again.");
+          }
+          return;
         }
 
         if (Array.isArray(data.thumbnails)) {

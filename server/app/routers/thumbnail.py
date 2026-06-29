@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from core.database import get_db
 from models.thumbnail import Thumbnail
@@ -21,17 +20,17 @@ async def create_thumbnail(
 ):
     # Verify authorization consistency
     if current_user_id != payload.userId:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            content={"success": False, "message": "Not authorized to create thumbnails for another user"}
+            detail="Not authorized to create thumbnails for another user"
         )
 
     # Verify the user exists
     user = db.query(User).filter(User.id == current_user_id).first()
     if not user:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"success": False, "message": "User not found"}
+            detail="User not found"
         )
     
     # Check if this thumbnail combination already exists (upsert)
@@ -66,9 +65,9 @@ async def get_thumbnails(current_user_id: int = Depends(get_current_user), db: S
     thumbnails = db.query(Thumbnail).filter(Thumbnail.user_id == current_user_id).all()
     
     if not thumbnails:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "No Thumbnails"}
+            detail="No Thumbnails"
         )
         
     return {

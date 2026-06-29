@@ -148,7 +148,10 @@ const Analyze: React.FC = () => {
       }
 
       const result = await response.json();
-      if (!response.ok || !result.success) {
+      if (!response.ok) {
+        throw new Error(result.detail || "Failed to save thumbnail");
+      }
+      if (!result.success) {
         throw new Error(result.message || "Failed to save thumbnail");
       }
       setFeedback(
