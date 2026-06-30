@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
   const { pathname, origin } = request.nextUrl;
 
   const GUEST_PAGES = ["/sign-in", "/sign-up", "/verifiyUser"];
-  const PROTECTED_PAGES = ["/saved-thumbnails", "/dashboard", "/analyze"];
+  const PROTECTED_PAGES = ["/saved-thumbnails"];
 
   const isGuestPage = GUEST_PAGES.some((route) => pathname.startsWith(route));
   const isProtectedPage = PROTECTED_PAGES.some((route) => pathname.startsWith(route));
