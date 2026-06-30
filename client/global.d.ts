@@ -9,4 +9,7 @@ declare class EyeDropper {
 
 interface Window {
   EyeDropper: typeof EyeDropper;
+  google?: any;
+  handleGoogleCredentialResponse?: any;
 }
+
