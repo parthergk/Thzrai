@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
+import { API_URL } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -54,7 +55,7 @@ const Page: React.FC = () => {
     setFeedback("");
 
     try {
-      const response = await fetch("http://localhost:8000/user", {
+      const response = await fetch(`${API_URL}/user`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({...values, provider: "credentials"}),
@@ -93,7 +94,7 @@ const Page: React.FC = () => {
       setError(null);
       setFeedback("");
       try {
-        const res = await fetch("http://localhost:8000/auth/google-login", {
+        const res = await fetch(`${API_URL}/auth/google-login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: response.credential }),

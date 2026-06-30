@@ -4,8 +4,9 @@ import React, { Suspense, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
+import { API_URL } from "@/lib/api";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   email: z
@@ -50,7 +51,7 @@ const SignIn: React.FC = () => {
     try {
       const callbackUrl = searchParams?.get("callbackUrl") ?? "/dashboard";
 
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,7 +90,7 @@ const SignIn: React.FC = () => {
       setError(null);
       setFeedback("");
       try {
-        const res = await fetch("http://localhost:8000/auth/google-login", {
+        const res = await fetch(`${API_URL}/auth/google-login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token: response.credential }),

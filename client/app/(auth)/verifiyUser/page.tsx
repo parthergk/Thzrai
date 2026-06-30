@@ -4,8 +4,9 @@ import React, { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
+import { API_URL } from "@/lib/api";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   code: z
@@ -47,7 +48,7 @@ const VerifyEmail: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/verify/", {
+      const response = await fetch(`${API_URL}/verify/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

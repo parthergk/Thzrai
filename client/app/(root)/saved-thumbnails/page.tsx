@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Download, Zap } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthProvider";
+import { API_URL } from "@/lib/api";
 
 const SavedThumbnails = () => {
   const { data: session, status } = useAuth();
@@ -20,7 +21,7 @@ const SavedThumbnails = () => {
         return;
       }
       try {
-        const response = await fetch("http://localhost:8000/thumbnail", {
+        const response = await fetch(`${API_URL}/thumbnail`, {
           credentials: "include"
         });
         const data = await response.json();

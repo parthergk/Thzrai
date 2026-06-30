@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/api';
 
 interface UserType {
   _id?: string;
@@ -31,7 +32,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   const checkSession = async () => {
     try {
-      const res = await fetch("http://localhost:8000/auth/me", {
+      const res = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include"
@@ -77,7 +78,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   const signOut = async () => {
     try {
-      await fetch("http://localhost:8000/auth/logout", {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include"
       });

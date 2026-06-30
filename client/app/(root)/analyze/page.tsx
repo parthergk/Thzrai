@@ -12,6 +12,7 @@ import Detail from "@/components/resourcesItem/Detail";
 import { useEffect, useState, Suspense, useCallback } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { THUMBNAIL_ANALYSIS_PROMPT } from "@/lib/prompts";
+import { API_URL } from "@/lib/api";
 // import {parsed} from "@/lib/data";
 
 interface FontItem {
@@ -64,7 +65,7 @@ const Analyze: React.FC = () => {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:8000/analyze", {
+      const res = await fetch(`${API_URL}/analyze`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -128,7 +129,7 @@ const Analyze: React.FC = () => {
     setIsSaving(true);
     setFeedback("");
     try {
-      const response = await fetch("http://localhost:8000/thumbnail", {
+      const response = await fetch(`${API_URL}/thumbnail`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
