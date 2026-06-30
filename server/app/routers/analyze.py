@@ -11,7 +11,7 @@ class Image(BaseModel):
     prompt: str
 
 @router.post("")
-async def analyze_thumbnail(img: Image, current_user_id: int = Depends(get_current_user)):
+async def analyze_thumbnail(img: Image):
     try:
         image_bytes = await download_image_from_url(str(img.image_url))
     except Exception as e:
