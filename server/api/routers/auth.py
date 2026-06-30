@@ -54,7 +54,7 @@ async def login(user: Login_User, response: Response, db: Session = Depends(get_
         httponly=True,
         max_age=604800,  # 7 days
         samesite="lax",
-        secure=False,    # Set to True in production (requires HTTPS)
+        secure=True,    # Set to True in production (requires HTTPS)
         path="/"
     )
 
@@ -97,7 +97,7 @@ def google_login(data: GoogleLoginRequest, response: Response, db: Session = Dep
         httponly=True,
         max_age=604800,  # 7 days
         samesite="lax",
-        secure=False,    # Set to True in production (requires HTTPS)
+        secure=True,    # Set to True in production (requires HTTPS)
         path="/"
     )
 
