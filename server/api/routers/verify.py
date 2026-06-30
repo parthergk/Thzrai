@@ -54,7 +54,7 @@ async def verify_user(user: VerifyUser, response: Response, db: Session = Depend
         httponly=True,
         max_age=604800,  # 7 days
         samesite="lax",
-        secure=False,    # Set to True in production (requires HTTPS)
+        secure=True,    # Set to True in production (requires HTTPS)
         path="/"
     )
 
