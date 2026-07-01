@@ -162,8 +162,8 @@ const Page: React.FC = () => {
   }, [signIn, router]);
 
   return (
-    <div className="mt-16 flex justify-center w-full min-h-screen bg-white dark:bg-neutral-900 border-t">
-      <div className="mt-4 w-full max-w-xs md:max-w-sm p-6">
+    <div className="flex justify-center items-center w-full min-h-screen bg-white dark:bg-neutral-900">
+      <div className="mt-4 w-full max-w-xs md:max-w-sm p-6 h-fit">
         <h2 className="text-neutral-900 dark:text-white text-2xl font-semibold mb-4">
           Create your free account
         </h2>
